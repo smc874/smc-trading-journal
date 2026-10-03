@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>SMC Trading Journal</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b1020;color:#eef2ff}
+.wrap{max-width:760px;margin:auto;padding:16px}
+h1{font-size:24px;margin:4px 0}.sub{color:#94a3b8;font-size:13px;margin-bottom:16px}
+.card{background:#111827;border:1px solid #263244;border-radius:16px;padding:15px;margin:12px 0}
+h2{font-size:16px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;color:#aab5c7;display:block;margin-bottom:5px}
+input,select,textarea{width:100%;background:#0b1220;color:#fff;border:1px solid #334155;border-radius:10px;padding:11px;font-size:14px}
+textarea{min-height:80px;resize:vertical}
+.full{grid-column:1/-1}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check{background:#0b1220;border:1px solid #293548;border-radius:10px;padding:10px;font-size:13px}
+.check input{width:auto;margin-right:7px}
+button{border:0;border-radius:11px;padding:12px 15px;font-weight:700;cursor:pointer}
+.primary{background:#fff;color:#0b1020;width:100%;font-size:15px}
+.danger{background:#3a1720;color:#fecaca}.small{padding:8px 10px;font-size:12px}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:#0b1220;border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:#94a3b8}
+.trade{border:1px solid #293548;border-radius:12px;padding:12px;margin-top:10px;background:#0b1220}
+.tradehead{display:flex;justify-content:space-between;gap:8px}.pill{font-size:11px;padding:4px 7px;border-radius:8px;background:#1e293b}
+.good{color:#86efac}.bad{color:#fca5a5}.muted{color:#94a3b8}
+@media(max-width:480px){.grid,.checks{grid-template-columns:1fr}.statgrid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🔥 SMC Trading Journal</h1>
+<div class="sub">1H → 15M → 5M | Liquidity → Confirmation → POI → Retest → Entry</div>
+
+<div class="card">
+<h2>📊 Journal Stats</h2>
+<div class="statgrid">
+<div class="stat"><b id="total">0</b><span>Total</span></div>
+<div class="stat"><b id="wins">0</b><span>Wins</span></div>
+<div class="stat"><b id="losses">0</b><span>Losses</span></div>
+</div>
+</div>
+
+<form id="form">
+<div class="card">
+<h2>1️⃣ Trade Info</h2>
+<div class="grid">
+<div><label>Date</label><input id="date" type="date" required></div>
+<div><label>Pair</label><input id="pair" placeholder="BTCUSDT" required></div>
+<div><label>Direction</label><select id="direction"><option>LONG</option><option>SHORT</option></select></div>
+<div><label>Setup Type</label><select id="setup"><option>Liquidity Sweep</option><option>Liquidity Grab</option><option>Liquidity Range</option></select></div>
+</div>
+</div>
+
+<div class="card">
+<h2>2️⃣ 1H — HTF Analysis</h2>
+<div class="grid">
+<div><label>HTF Bias</label><select id="bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
+<div><label>Liquidity</label><select id="liq"><option>BSL</option><option>SSL</option><option>Both / Range</option></select></div>
+<div class="full"><label>1H Notes</label><textarea id="htfnotes" placeholder="Premium/Discount, OB, liquidity..."></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<h2>3️⃣ 15M — Liquidity Setup</h2>
+<div class="checks">
+<label class="check"><input type="checkbox" id="sweep"> Sweep marked</label>
+<label class="check"><input type="checkbox" id="grab"> Grab marked</label>
+<label class="check"><input type="checkbox" id="range"> Range liquidity marked</label>
+<label class="check"><input type="checkbox" id="displace"> Displacement</label>
+<label class="check"><input type="checkbox" id="mss15"> MSS / CHOCH</label>
+<label class="check"><input type="checkbox" id="liqvalid"> Liquidity valid</label>
+</div>
+<div style="margin-top:10px"><label>15M Notes</label><textarea id="m15" placeholder="What liquidity was taken and what happened after?"></textarea></div>
+</div>
+
+<div class="card">
+<h2>4️⃣ 5M — Confirmation & Entry</h2>
+<div class="checks">
+<label class="check"><input type="checkbox" id="mss5"> 5M MSS / CHOCH</label>
+<label class="check"><input type="checkbox" id="fvg"> FVG marked</label>
+<label class="check"><input type="checkbox" id="ob"> OB marked</label>
+<label class="check"><input type="checkbox" id="retest"> Retest confirmed</label>
+<label class="check"><input type="checkbox" id="entryconfirm"> Entry confirmation</label>
+<label class="check"><input type="checkbox" id="clean"> Clean setup</label>
+</div>
+</div>
+
+<div class="card">
+<h2>5️⃣ Risk Management</h2>
+<div class="grid">
+<div><label>Entry Price</label><input id="entry" type="number" step="any"></div>
+<div><label>Stop Loss</label><input id="sl" type="number" step="any"></div>
+<div><label>Take Profit</label><input id="tp" type="number" step="any"></div>
+<div><label>Risk : Reward</label><select id="rr"><option>1:3</option><option>1:2</option><option>1:4</option><option>Custom</option></select></div>
+<div><label>Risk %</label><input id="risk" type="number" step="0.1" value="1"></div>
+<div><label>Result</label><select id="result"><option>Win</option><option>Loss</option><option>Break Even</option></select></div>
+</div>
+</div>
+
+<div class="card">
+<h2>6️⃣ If Loss — Reason</h2>
+<div class="checks">
+<label class="check"><input type="checkbox" id="r1"> No proper confirmation</label>
+<label class="check"><input type="checkbox" id="r2"> Weak displacement</label>
+<label class="check"><input type="checkbox" id="r3"> Wrong liquidity</label>
+<label class="check"><input type="checkbox" id="r4"> FVG / OB invalid</label>
+<label class="check"><input type="checkbox" id="r5"> Entered before retest</label>
+<label class="check"><input type="checkbox" id="r6"> HTF bias wrong</label>
+<label class="check"><input type="checkbox" id="r7"> SL too tight</label>
+<label class="check"><input type="checkbox" id="r8"> Overtrading / emotional</label>
+<label class="check"><input type="checkbox" id="r9"> News / volatility</label>
+<label class="check"><input type="checkbox" id="r10"> Other</label>
+</div>
+</div>
+
+<div class="card">
+<h2>📝 Trade Review</h2>
+<textarea id="lesson" placeholder="What did I do well? What should I improve next trade?"></textarea>
+</div>
+
+<button class="primary" type="submit">💾 Save Trade</button>
+</form>
+
+<div class="card">
+<h2>📚 Saved Trades</h2>
+<div id="trades"><div class="muted">No trades saved yet.</div></div>
+</div>
+
+<div class="card">
+<button class="danger small" onclick="clearAll()">Delete All Trades</button>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let trades=JSON.parse(localStorage.getItem("smcTrades")||"[]");
+$("date").value=new Date().toISOString().slice(0,10);
+
+const checks=["sweep","grab","range","displace","mss15","liqvalid","mss5","fvg","ob","retest","entryconfirm","clean","r1","r2","r3","r4","r5","r6","r7","r8","r9","r10"];
+
+function data(){
+ let d={};
+ document.querySelectorAll("input,select,textarea").forEach(x=>{
+   if(x.type==="checkbox") d[x.id]=x.checked; else d[x.id]=x.value;
+ });
+ d.id=Date.now(); return d;
+}
+function save(){localStorage.setItem("smcTrades",JSON.stringify(trades));render()}
+$("form").addEventListener("submit",e=>{e.preventDefault();trades.unshift(data());save();e.target.reset();$("date").value=new Date().toISOString().slice(0,10);alert("Trade saved 🔥")});
+
+function reasons(t){
+ const map={r1:"No proper confirmation",r2:"Weak displacement",r3:"Wrong liquidity",r4:"FVG / OB invalid",r5:"Entered before retest",r6:"HTF bias wrong",r7:"SL too tight",r8:"Overtrading / emotional",r9:"News / volatility",r10:"Other"};
+ return Object.keys(map).filter(k=>t[k]).map(k=>map[k]).join(", ")||"—";
+}
+function render(){
+ $("total").textContent=trades.length;
+ $("wins").textContent=trades.filter(t=>t.result==="Win").length;
+ $("losses").textContent=trades.filter(t=>t.result==="Loss").length;
+ if(!trades.length){$("trades").innerHTML='<div class="muted">No trades saved yet.</div>';return}
+ $("trades").innerHTML=trades.map(t=>`
+ <div class="trade">
+  <div class="tradehead"><b>${t.pair} • ${t.direction}</b><span class="pill ${t.result==="Win"?"good":t.result==="Loss"?"bad":""}">${t.result}</span></div>
+  <div class="muted" style="margin-top:6px">${t.date} • ${t.setup} • RR ${t.rr}</div>
+  <div style="margin-top:8px;font-size:13px">
+   <b>1H:</b> ${t.bias} / ${t.liq} &nbsp; <b>15M:</b> ${t.mss15?"MSS":"—"} ${t.displace?"Displacement":""}
+   &nbsp; <b>5M:</b> ${t.mss5?"MSS":""} ${t.fvg?"FVG":""} ${t.ob?"OB":""} ${t.retest?"Retest":"No retest"}
+  </div>
+  ${t.result==="Loss"?`<div style="margin-top:7px;font-size:13px"><b>Loss reason:</b> ${reasons(t)}</div>`:""}
+  <div style="margin-top:7px;font-size:13px"><b>Lesson:</b> ${t.lesson||"—"}</div>
+  <button class="danger small" style="margin-top:9px" onclick="removeTrade(${t.id})">Delete</button>
+ </div>`).join("");
+}
+function removeTrade(id){trades=trades.filter(t=>t.id!==id);save()}
+function clearAll(){if(confirm("Delete all saved trades?")){trades=[];save()}}
+render();
+</script>
+</body>
+</html>
